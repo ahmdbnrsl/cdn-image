@@ -1,13 +1,26 @@
 const path = await import("path");
-const { Commit } = await import(path.join(process.cwd(), "api/functions", "upload.js"));
 const exp = await import("express");
 const multer = await import("multer");
+const { Octokit } = await import("octokit");
+const { restEndpointMethods } = await import("@octokit/plugin-rest-endpoint-methods");
+const { fileTypeFromBuffer } = await import("file-type");
 const dotenv = await import("dotenv");
 dotenv.config();
+/**
+ *
+ *
+ * Configuration
+ **/
 const STORAGE_URL = process.env.STORAGE_URL || "";
+const OctoWithPlugin = Octokit.plugin(restEndpointMethods);
 const app = exp.default();
 const multerDefault = multer.default;
 app.use(exp.static(path.join(process.cwd(), "public")));
+/**
+ *
+ *
+ * Multer
+ **/
 const storage = multerDefault.memoryStorage();
 const upload = multerDefault({
     storage,
@@ -23,6 +36,49 @@ const upload = multerDefault({
         fileSize: 10 * 1024 * 1024
     }
 });
+class Commit {
+    constructor(githubUsername = process.env.GH_USN || "", octoConfig = new OctoWithPlugin({
+        auth: process.env.GH_TOKEN || ""
+    })) {
+        this.githubUsername = githubUsername;
+        this.octoConfig = octoConfig;
+    }
+    async push(file) {
+        const buffer = Buffer.from(file);
+        const fileExtension = await fileTypeFromBuffer(file);
+        if (!fileExtension)
+            throw new Error("File extension not supported");
+        if (!["png", "jpg", "jpeg"].includes(fileExtension.ext))
+            throw new Error("File extension not supported");
+        const content = buffer.toString("base64");
+        const fileName = `${Date.now().toString()}.${fileExtension.ext}`;
+        try {
+            const response = await this.octoConfig.rest.repos.createOrUpdateFileContents({
+                owner: this.githubUsername,
+                repo: "storage",
+                path: `storage/${fileName}`,
+                message: Date.now().toString(),
+                content
+            });
+            return {
+                status: true,
+                code: response.status,
+                id: fileName
+            };
+        }
+        catch (err) {
+            return {
+                status: false,
+                errorMessage: err
+            };
+        }
+    }
+}
+/**
+ * Routes
+ *
+ *
+ **/
 app.post("/upload", upload.single("image"), async (req, res) => {
     if (!req.file) {
         res.status(400).json({
