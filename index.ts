@@ -1,17 +1,20 @@
-import { Commit } from "./functions/upload";
-import * as fs from "fs";
-import path from "path";
-import exp from "express";
-import multer from "multer";
-import "dotenv/config";
+const path = await import("path");
+const { Commit } = await import(
+    path.join(process.cwd(), "api/functions", "upload.js")
+);
+const exp = await import("express");
+const multer = await import("multer");
+const dotenv = await import("dotenv");
+dotenv.config();
 
 const STORAGE_URL = process.env.STORAGE_URL || "";
 
-const app = exp();
+const app = exp.default();
+const multerDefault = multer.default;
 app.use(exp.static(path.join(process.cwd(), "public")));
 
-const storage = multer.memoryStorage();
-const upload = multer({
+const storage = multerDefault.memoryStorage();
+const upload = multerDefault({
     storage,
     fileFilter: (req, file, cb) => {
         if (["image/png", "image/jpg", "image/jpeg"].includes(file.mimetype)) {
@@ -76,3 +79,5 @@ app.use((req, res, next) => {
 app.listen(8000, () => {
     console.log("App is running...");
 });
+
+export {};

@@ -18,15 +18,18 @@ form.addEventListener("submit", async e => {
     });
 
     if (!response?.ok) {
+        imgWrapper.style.display = "none";
+        label.style.display = "flex";
         submit.style.display = "flex";
         loading.style.display = "none";
         error.style.display = "flex";
+        file.files[0] = undefined;
     } else {
         loading.style.display = "none";
         refresh.style.display = "flex";
         const result = await response.json();
         urlwrap.style.display = "flex";
-        url.value = document?.URL + result?.id;
+        url.value = document?.URL + "file/" + result?.id;
     }
 });
 
@@ -53,5 +56,11 @@ refresh.addEventListener("click", e => {
 });
 
 copy.addEventListener("click", e => {
+    icopy.style.display = "none";
+    icheck.style.display = "inline-block";
     window.navigator.clipboard.writeText(url?.value || "");
+    setTimeout(function () {
+        icopy.style.display = "inline-block";
+        icheck.style.display = "none";
+    }, 500);
 });

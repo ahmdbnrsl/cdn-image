@@ -1,8 +1,10 @@
-import { Octokit } from "octokit";
-import { restEndpointMethods } from "@octokit/plugin-rest-endpoint-methods";
-import { fileTypeFromBuffer } from "file-type";
-import * as fs from "fs";
-import "dotenv/config";
+const { Octokit } = await import("octokit");
+const { restEndpointMethods } = await import(
+    "@octokit/plugin-rest-endpoint-methods"
+);
+const { fileTypeFromBuffer } = await import("file-type");
+const dotenv = await import("dotenv");
+dotenv.config();
 
 const OctoWithPlugin = Octokit.plugin(restEndpointMethods);
 
@@ -54,3 +56,5 @@ export class Commit {
         }
     }
 }
+
+export {};

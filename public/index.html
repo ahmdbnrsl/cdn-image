@@ -36,8 +36,24 @@
             <input type="file" accept=".png, .jpg, .jpeg" id="file" />
             <div id="urlwrap">
                 <input type="text" readonly="true" id="url" value="" />
-                <button id="copy">
+                <button id="copy" type="button">
                     <svg
+                        id="icheck"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="lucide lucide-check-icon lucide-check"
+                    >
+                        <path d="M20 6 9 17l-5-5" />
+                    </svg>
+                    <svg
+                        id="icopy"
                         xmlns="http://www.w3.org/2000/svg"
                         width="16"
                         height="16"
@@ -64,8 +80,8 @@
                 </button>
             </div>
             <button id="submit" type="submit" disabled="true">Upload</button>
-            <button id="loading">Mengupload...</button>
-            <button id="refresh">Upload Gambar Lain</button>
+            <button id="loading" type="button">Mengupload...</button>
+            <button id="refresh" type="button">Upload Gambar Lain</button>
             <p class="error" id="error">Error: Gagal Mengupload File</p>
         </form>
         <script src="script.js"></script>

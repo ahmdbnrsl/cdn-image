@@ -1,9 +1,9 @@
 {
 	"exclude": ["node_modules", "api/**/*"],
 	"compilerOptions": {
-		"target": "es6",
+		"target": "es2017",
 		"moduleResolution": "node",
-		"module": "CommonJS",
+		"module": "es2022",
 		"outDir": "api/",
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
